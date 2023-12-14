@@ -1,37 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:webant/screens/news_details/news_details.dart';
+import 'package:web_ant_project/bloc/news/news_bloc.dart';
+import 'package:web_ant_project/screens/news_details/news_details.screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NewsScreen extends StatelessWidget {
-  const NewsScreen
-  ({super.key});
+class NewsScreen extends StatefulWidget {
+  const NewsScreen({super.key});
 
+  @override
+  State<NewsScreen> createState() => _NewsScreenState();
+}
+
+class _NewsScreenState extends State<NewsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Все новостии',
-        style: TextStyle(
-          fontSize: 20
-        ),
-        ),
+        title: const Text('Все новости', style: TextStyle(fontSize: 20)),
       ),
-
-      body: ListView.builder(
-        itemCount: 20,
-        itemBuilder: (context, index)=>
-          ListTile(
-            onTap:(){
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const NewsDetailsScreen()));
-            } ,
-            leading: Image.network(
-              'https://optavideo.com/images/chart/Test_chart_11.jpg'),
-            title: Text(
-              'Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов, используя Lorem Ipsum для распечатки образцов. Lorem Ipsum не только успешно пережил без заметных изменений пять веков, но и перешагнул в электронный дизайн. Его популяризации в новое время послужили публикация листов Letraset с образцами Lorem Ipsum в 60-х годах и, в более недавнее время, программы электронной вёрстки типа Aldus PageMaker, в шаблонах которых используется Lorem Ipsum.',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis ,),
-            subtitle: Text('bbbbbbbbb'),
-          ),        
+      body: BlocBuilder<NewsBloc, NewsState>(
+        builder: (context, state) {
+          return switch (state) {
+            final NewsInitial _ => const SizedBox.shrink(),
+            final NewsLoading _ =>
+              const Center(child: CircularProgressIndicator()),
+            final NewsFailure _ => const Center(child: Text('ошибка')),
+            final NewsSuccess state => ListView.builder(
+                itemCount: state.news.length,
+                itemBuilder: (context, index) {
+                  final newsItem = state.news[index];
+                  return ListTile(
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return NewsDetailsScreen(
+                          newsId: newsItem.id,
+                        );
+                      }));
+                    },
+                    leading: (newsItem.imageUrl != null)
+                        ? Container(
+                            width: 70,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                      newsItem.imageUrl!,
+                                    ),
+                                    fit: BoxFit.cover)),
+                          )
+                        : Container(
+                            width: 70,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                image: const DecorationImage(
+                                    image: AssetImage (
+                                      'assets/images/news_image.jpeg'
+                                    ),
+                                    fit: BoxFit.cover)),
+                          ),
+                    title: Text(
+                      newsItem.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      newsItem.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                })
+          };
+        },
       ),
     );
   }
