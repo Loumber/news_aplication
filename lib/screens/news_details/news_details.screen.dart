@@ -39,8 +39,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                 final NewsDetailsLoadingState _ => const Center(
                     child: CircularProgressIndicator(),
                   ),
-                final NewsDetailsFailureState _ => const Center(
-                    child: CircularProgressIndicator(),
+                final NewsDetailsFailureState state => Center(
+                    child: Text(state.errorMessage),
                   ),
                 final NewsDetailsSuccessState state => SingleChildScrollView(
                     padding: const EdgeInsets.only(bottom: 58),
@@ -52,14 +52,13 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                                   height: 235,
                                   width: MediaQuery.of(context).size.width,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),),
-                                      child: Text(state.news.imageUrl!),
-                                      
-                                      //image: DecorationImage(
-                                      //    image: NetworkImage(
-                                      //      state.news.imageUrl!,
-                                      //    ),
-                                      //    fit: BoxFit.cover)),
+                                      borderRadius: BorderRadius.circular(6),
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                            state.news.imageUrl!,
+                                          ),
+                                          fit: BoxFit.cover),
+                                          )
                                 )
                               : Container(
                                   height: 235,
@@ -132,8 +131,9 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                                 ],
                               ),
                             ),
-                          )
-                        ]),
+                          ),
+                        ]
+                        ),
                   ),
               };
             },

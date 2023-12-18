@@ -13,4 +13,8 @@ final class NewsDetailsSuccessState extends NewsDetailsState {
   NewsDetailsSuccessState({required this.news});
 }
 
-final class NewsDetailsFailureState extends NewsDetailsState {}
+final class NewsDetailsFailureState extends NewsDetailsState {
+  final String errorMessage;
+
+  NewsDetailsFailureState ({required this.errorMessage});
+}

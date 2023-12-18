@@ -30,10 +30,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       if (news != null) {
         emit(NewsSuccess(news: news));
       } else {
-        emit(NewsFailure());
+        emit(NewsFailure(errorMessage: 'Не получилось загрузить новости'));
       }
     } catch (error) {
-      emit(NewsFailure());
+      emit(NewsFailure(errorMessage: error.toString()));
     }
   }
 }

@@ -24,8 +24,10 @@ class _NewsScreenState extends State<NewsScreen> {
             final NewsInitial _ => const SizedBox.shrink(),
             final NewsLoading _ =>
               const Center(child: CircularProgressIndicator()),
-            final NewsFailure _ => const Center(child: Text('ошибка')),
-            final NewsSuccess state => ListView.builder(
+            final NewsFailure state => Center(child: Text(state.errorMessage)),
+            final NewsSuccess state => RefreshIndicator(
+              onRefresh: () async {context.read<NewsBloc>().add(LoadNews());},
+              child: ListView.builder(
                 itemCount: state.news.length,
                 itemBuilder: (context, index) {
                   final newsItem = state.news[index];
@@ -71,6 +73,7 @@ class _NewsScreenState extends State<NewsScreen> {
                     ),
                   );
                 })
+                )
           };
         },
       ),

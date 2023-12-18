@@ -25,6 +25,7 @@ class NewsDetailsBloc extends Bloc<NewsDetailsEvent, NewsDetailsState> {
     LoadNewsById event,
     Emitter<NewsDetailsState> emit,
   ) async {
+    try{
     emit(NewsDetailsLoadingState());
 
     final newsResponse = await newsService.getNewsById(event.id);
@@ -33,17 +34,25 @@ class NewsDetailsBloc extends Bloc<NewsDetailsEvent, NewsDetailsState> {
 
     emit(
       NewsDetailsSuccessState(news: news),
-    );
+    );}
+    catch(error){
+      emit(NewsDetailsFailureState(errorMessage: error.toString()));
+    }
   }
 
   Future<void> _onOpenSourceSiteLink(
     OpenNewsSourceLink event,
     Emitter<NewsDetailsState> emit,
   ) async {
+    try{
     final uri = Uri.tryParse(event.link);
 
     if (uri != null && uri.isAbsolute) {
       await launchUrl(uri);
+    }
+    }
+    catch(error){
+      emit(NewsDetailsFailureState(errorMessage: error.toString()));
     }
   }
 }
